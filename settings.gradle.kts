@@ -29,5 +29,5 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
-rootProject.name = "MyStream"
-include(":app")
+rootProject.name = "on-device-personalized-moderation"
+include(":android:app")
