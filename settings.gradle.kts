@@ -31,3 +31,4 @@ plugins {
 
 rootProject.name = "on-device-personalized-moderation"
 include(":android:app")
+include(":server")
