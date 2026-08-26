@@ -15,3 +15,4 @@
 /.idea/runConfigurations.xml
 .DS_Store
 /build
+/server/mystream/build

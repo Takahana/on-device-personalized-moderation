@@ -22,6 +22,9 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+        versionCatalogs {
+            create("ktorLibs").from("io.ktor:ktor-version-catalog:3.5.2")
+        }
     }
 }
 
@@ -31,4 +34,4 @@ plugins {
 
 rootProject.name = "on-device-personalized-moderation"
 include(":android:app")
-include(":server")
+include(":server:mystream")
