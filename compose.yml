@@ -1,0 +1,7 @@
+services:
+  mystream:
+    build:
+      context: .
+      dockerfile: server/mystream/Dockerfile
+    ports:
+      - "8080:8080"
