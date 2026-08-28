@@ -1,7 +1,16 @@
+import java.util.Properties
+
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.compose.compiler)
   alias(libs.plugins.kotlin.serialization)
+}
+
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) {
+        file.inputStream().use(::load)
+    }
 }
 
 android {
@@ -16,9 +25,24 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField(
+                "String",
+                "LIVE_CHAT_URL",
+                "\"ws://localhost:8080\""
+            )
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            val liveChatUrl =
+                localProperties.getProperty("LIVE_CHAT_URL")
+                    ?: error("LIVE_CHAT_URL is not defined")
+            buildConfigField(
+                "String",
+                "LIVE_CHAT_URL",
+                "\"$liveChatUrl\""
+            )
         }
     }
     compileOptions {
@@ -28,7 +52,7 @@ android {
     buildFeatures {
       compose = true
       aidl = false
-      buildConfig = false
+      buildConfig = true
       shaders = false
     }
 
