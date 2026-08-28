@@ -4,6 +4,8 @@ plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.compose.compiler)
   alias(libs.plugins.kotlin.serialization)
+  alias(libs.plugins.hilt.android)
+  alias(libs.plugins.ksp)
 }
 
 val localProperties = Properties().apply {
@@ -105,4 +107,8 @@ dependencies {
   implementation(libs.androidx.navigation3.ui)
   implementation(libs.androidx.navigation3.runtime)
   implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+
+  // Hilt
+  implementation(libs.hilt.android)
+  ksp(libs.hilt.android.compiler)
 }
