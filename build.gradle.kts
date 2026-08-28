@@ -34,3 +34,15 @@ tasks.register<Exec>("dockerDown") {
     "down",
   )
 }
+
+tasks.register<Exec>("reverseLocalServer") {
+  group = "development"
+  description = "Reverse local server port 8080 via adb"
+
+  commandLine(
+    "adb",
+    "reverse",
+    "tcp:8080",
+    "tcp:8080",
+  )
+}
