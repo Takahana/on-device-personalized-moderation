@@ -13,6 +13,8 @@
 /.idea/gradle.xml
 /.idea/migrations.xml
 /.idea/runConfigurations.xml
+/.idea/deviceManager.xml
 .DS_Store
 /build
 /server/mystream/build
+/.kotlin/metadata
