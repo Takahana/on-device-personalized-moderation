@@ -31,6 +31,7 @@ android {
             buildConfigField(
                 "String",
                 "LIVE_CHAT_URL",
+                // エミュレーターを起動しているマシンのローカルサーバーにアクセスする場合は ws://10.0.2.2:8080
                 "\"ws://localhost:8080\""
             )
         }
