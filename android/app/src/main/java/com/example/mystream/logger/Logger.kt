@@ -6,8 +6,8 @@ import com.example.mystream.BuildConfig
 class Logger(
     private val tag: String,
 ) {
-    fun d(message: String) {
+    fun d(message: String, throwable: Throwable? = null) {
         if (!BuildConfig.DEBUG) return
-        Log.d(tag, message)
+        Log.d(tag, message, throwable)
     }
 }
