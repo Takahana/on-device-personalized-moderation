@@ -1,11 +1,14 @@
 package com.example.mystream.ui.main
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
@@ -15,6 +18,7 @@ import com.example.mystream.theme.MyStreamTheme
 @Composable
 fun MainScreen(
   onItemClick: (NavKey) -> Unit,
+  onToTestWatchPageButtonClick: () -> Unit,
   modifier: Modifier = Modifier,
   viewModel: MainScreenViewModel = viewModel { MainScreenViewModel(DefaultDataRepository()) },
 ) {
@@ -24,7 +28,11 @@ fun MainScreen(
       // Blank
     }
     is MainScreenUiState.Success -> {
-      MainScreen(data = (state as MainScreenUiState.Success).data, modifier = modifier)
+      MainScreen(
+        data = (state as MainScreenUiState.Success).data,
+        onToTestWatchPageButtonClick = onToTestWatchPageButtonClick,
+        modifier = modifier
+      )
     }
     is MainScreenUiState.Error -> {
       Text("Error loading data: ${(state as MainScreenUiState.Error).throwable.message}")
@@ -33,8 +41,20 @@ fun MainScreen(
 }
 
 @Composable
-internal fun MainScreen(data: List<String>, modifier: Modifier = Modifier) {
-  Column(modifier) { data.forEach { Greeting(it) } }
+internal fun MainScreen(
+  data: List<String>,
+  onToTestWatchPageButtonClick: () -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  Column(
+    modifier = modifier,
+    verticalArrangement = Arrangement.spacedBy(8.dp),
+  ) {
+    data.forEach { Greeting(it) }
+    Button(onClick = onToTestWatchPageButtonClick) {
+      Text("To Test Watch Page")
+    }
+  }
 }
 
 @Composable
@@ -45,11 +65,11 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-  MyStreamTheme { MainScreen(listOf("Android")) }
+  MyStreamTheme { MainScreen(listOf("Android"), onToTestWatchPageButtonClick = {}) }
 }
 
 @Preview(showBackground = true, widthDp = 340)
 @Composable
 fun MainScreenPortraitPreview() {
-  MyStreamTheme { MainScreen(listOf("Android")) }
+  MyStreamTheme { MainScreen(listOf("Android"), onToTestWatchPageButtonClick = {}) }
 }
