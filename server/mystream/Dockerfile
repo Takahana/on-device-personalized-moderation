@@ -11,6 +11,8 @@ COPY gradle.properties .
 COPY settings.gradle.kts .
 COPY build.gradle.kts .
 COPY server/mystream/build.gradle.kts ./server/mystream/build.gradle.kts
+COPY shared/build.gradle.kts ./shared/build.gradle.kts
+COPY shared/src ./shared/src
 COPY scripts/exclude-android-module.sh ./scripts/exclude-android-module.sh
 
 RUN chmod +x gradlew

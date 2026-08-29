@@ -22,4 +22,7 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation(ktorLibs.server.testHost)
+
+    // Project module
+    implementation(project(":shared"))
 }

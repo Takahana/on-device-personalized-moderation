@@ -5,6 +5,9 @@ kotlin = "2.3.20"
 # Ktor Server
 logback = "1.5.37"
 
+# Ktor Client
+ktor = "3.5.2"
+
 # Android
 androidGradlePlugin = "9.0.1"
 androidxCore = "1.18.0"
@@ -22,6 +25,9 @@ lifecycleViewmodelNav3 = "2.10.0"
 hilt = "2.59.2"
 hiltLifecycleViewModelCompose = "1.3.0"
 ksp = "2.3.4"
+kotlinxSerializationJson = "1.11.0"
+kotlinStdlib = "2.3.20"
+kotlinTest = "2.3.20"
 
 [libraries]
 # Android
@@ -50,8 +56,18 @@ androidx-hilt-lifecycle-viewmodel-compose = { module = "androidx.hilt:hilt-lifec
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 
+# Kotlin
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinStdlib" }
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlinTest" }
+
 # Ktor Server
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+
+# Ktor Client
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor" }
 
 [plugins]
 # Kotlin
@@ -65,3 +81,6 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
 
 # Ktor Server
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "androidGradlePlugin" }
+android-lint = { id = "com.android.lint", version.ref = "androidGradlePlugin" }
