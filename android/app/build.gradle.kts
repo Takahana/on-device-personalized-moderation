@@ -78,6 +78,7 @@ dependencies {
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.lifecycle.runtime.ktx)
   implementation(libs.androidx.activity.compose)
+  implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
 
   // Arch Components
   implementation(libs.androidx.lifecycle.runtime.compose)
@@ -111,4 +112,15 @@ dependencies {
   // Hilt
   implementation(libs.hilt.android)
   ksp(libs.hilt.android.compiler)
+
+  // Ktor Client
+  implementation(libs.ktor.client.core)
+  implementation(libs.ktor.client.okhttp)
+  implementation(libs.ktor.client.websockets)
+
+  // Kotlin
+  implementation(libs.kotlinx.serialization.json)
+
+  // Project modules
+  implementation(project(":shared"))
 }

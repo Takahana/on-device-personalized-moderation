@@ -19,7 +19,12 @@ dependencies {
     implementation(ktorLibs.server.netty)
     implementation(ktorLibs.server.websockets)
     implementation(libs.logback.classic)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(ktorLibs.serialization.kotlinx.json)
 
     testImplementation(kotlin("test"))
     testImplementation(ktorLibs.server.testHost)
+
+    // Project module
+    implementation(project(":shared"))
 }
