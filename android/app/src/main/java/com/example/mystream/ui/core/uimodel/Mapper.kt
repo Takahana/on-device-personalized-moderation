@@ -1,7 +1,6 @@
-package com.example.mystream.viewmodel
+package com.example.mystream.ui.core.uimodel
 
 import com.example.mystream.domain.content.StreamingContentId
-import com.example.mystream.ui.uimodel.id.StreamingContentIdUiModel
 import kotlin.jvm.Throws
 
 @Throws(IllegalArgumentException::class)

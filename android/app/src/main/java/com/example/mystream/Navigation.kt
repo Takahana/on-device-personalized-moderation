@@ -9,11 +9,10 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.example.mystream.domain.content.StreamingContentId
+import com.example.mystream.ui.core.uimodel.StreamingContentIdUiModel
 import com.example.mystream.ui.main.MainScreen
 import com.example.mystream.ui.streamingcontent.StreamingContentWatchPageScreen
 import com.example.mystream.ui.streamingcontent.StreamingContentWatchPageViewModel
-import com.example.mystream.ui.uimodel.id.StreamingContentIdUiModel
 
 @Composable
 fun MainNavigation() {

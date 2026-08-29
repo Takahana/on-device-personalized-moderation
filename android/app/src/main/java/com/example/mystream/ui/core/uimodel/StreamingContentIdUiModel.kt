@@ -1,4 +1,4 @@
-package com.example.mystream.ui.uimodel.id
+package com.example.mystream.ui.core.uimodel
 
 import kotlinx.serialization.Serializable
 

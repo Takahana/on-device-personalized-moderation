@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mystream.domain.chat.LiveChatMessage
 import com.example.mystream.logger.Logger
-import com.example.mystream.ui.uimodel.id.StreamingContentIdUiModel
+import com.example.mystream.ui.core.uimodel.StreamingContentIdUiModel
+import com.example.mystream.ui.core.uimodel.toDomain
 import com.example.mystream.usecase.StreamingContentWatchPagePresenter
 import com.example.mystream.usecase.StreamingContentWatchPageUseCase
-import com.example.mystream.viewmodel.toDomain
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
