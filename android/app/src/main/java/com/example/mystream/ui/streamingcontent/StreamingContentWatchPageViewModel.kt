@@ -6,12 +6,14 @@ import com.example.mystream.domain.chat.LiveChatMessage
 import com.example.mystream.logger.Logger
 import com.example.mystream.ui.core.uimodel.StreamingContentIdUiModel
 import com.example.mystream.ui.core.uimodel.toDomain
+import com.example.mystream.ui.streamingcontent.uimodel.mapToUiModel
 import com.example.mystream.usecase.StreamingContentWatchPagePresenter
 import com.example.mystream.usecase.StreamingContentWatchPageUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -37,7 +39,7 @@ class StreamingContentWatchPageViewModel @AssistedInject constructor(
 
     val uiState: StateFlow<StreamingContentWatchPageUiState> = messages.map { currentMessages ->
         StreamingContentWatchPageUiState(
-            messages = currentMessages,
+            messages = currentMessages.mapToUiModel().toImmutableList(),
         )
     }.stateIn(
         scope = viewModelScope,
