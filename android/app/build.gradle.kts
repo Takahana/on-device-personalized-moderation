@@ -113,6 +113,14 @@ dependencies {
   implementation(libs.hilt.android)
   ksp(libs.hilt.android.compiler)
 
+  // Ktor Client
+  implementation(libs.ktor.client.core)
+  implementation(libs.ktor.client.okhttp)
+  implementation(libs.ktor.client.websockets)
+
+  // Kotlin
+  implementation(libs.kotlinx.serialization.json)
+
   // Project modules
   implementation(project(":shared"))
 }
