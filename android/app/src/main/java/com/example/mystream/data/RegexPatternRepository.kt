@@ -3,7 +3,7 @@ package com.example.mystream.data
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
-class RegexPatternDataSource {
+class RegexPatternRepository {
 
   private val cache = MutableStateFlow<Set<String>>(emptySet())
 

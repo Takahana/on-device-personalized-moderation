@@ -1,14 +1,14 @@
 package com.example.mystream.service
 
-import com.example.mystream.data.RegexPatternDataSource
+import com.example.mystream.data.RegexPatternRepository
 import com.example.mystream.domain.chat.LiveChatMessage
 
 class DynamicLiveChatModerator(
-  private val regexPatternDataSource: RegexPatternDataSource,
+  private val regexPatternRepository: RegexPatternRepository,
 ) : LiveChatModerator {
 
   override fun moderate(message: LiveChatMessage): LiveChatModerateResult {
-    regexPatternDataSource.getRegexPatterns().forEach { pattern ->
+    regexPatternRepository.getRegexPatterns().forEach { pattern ->
       if (message.message.matches(Regex(pattern))) {
         return LiveChatModerateResult.HideByAI
       }

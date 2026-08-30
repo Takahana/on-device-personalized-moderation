@@ -10,7 +10,10 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-class MainScreenViewModel(dataRepository: DataRepository) : ViewModel() {
+class MainScreenViewModel(
+  dataRepository: DataRepository,
+
+) : ViewModel() {
   val uiState: StateFlow<MainScreenUiState> =
     dataRepository.data
       .map<List<String>, MainScreenUiState>(::Success)
