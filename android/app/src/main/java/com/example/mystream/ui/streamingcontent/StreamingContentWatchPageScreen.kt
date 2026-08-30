@@ -1,5 +1,6 @@
 package com.example.mystream.ui.streamingcontent
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import com.example.mystream.ui.streamingcontent.StreamingContentWatchPageEffect.ShowErrorToast
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
@@ -78,8 +80,30 @@ private fun ChatList(
     messages: ImmutableList<LiveChatMessageUiModel>,
     modifier: Modifier = Modifier,
 ) {
+    val listState = rememberLazyListState()
+
+    // スクロール位置を最下部に保つ処理
+    LaunchedEffect(messages.size) {
+        if (messages.isNotEmpty()) {
+            val layoutInfo = listState.layoutInfo
+            val visibleItems = layoutInfo.visibleItemsInfo
+
+            if (visibleItems.isNotEmpty()) {
+                val lastVisibleItemIndex = visibleItems.last().index
+                val totalItemsCount = layoutInfo.totalItemsCount
+                val isAtBottom = lastVisibleItemIndex >= totalItemsCount - 2
+                if (isAtBottom) {
+                    listState.animateScrollToItem(messages.size - 1)
+                }
+            } else {
+                listState.scrollToItem(messages.size - 1)
+            }
+        }
+    }
+
     LazyColumn(
         modifier = modifier,
+        state = listState,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(messages) { message ->
