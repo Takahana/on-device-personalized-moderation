@@ -29,6 +29,8 @@ kotlinxSerializationJson = "1.11.0"
 kotlinxCollectionsImmutable = "0.5.2"
 kotlinStdlib = "2.3.20"
 kotlinTest = "2.3.20"
+genaiPrompt = "1.0.0-beta3"
+genaiSchemaCompiler = "1.0.0-alpha1"
 
 [libraries]
 # Android
@@ -56,6 +58,8 @@ androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecy
 androidx-hilt-lifecycle-viewmodel-compose = { module = "androidx.hilt:hilt-lifecycle-viewmodel-compose", version.ref = "hiltLifecycleViewModelCompose" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+genai-prompt = { module = "com.google.mlkit:genai-prompt", version.ref = "genaiPrompt" }
+genai-schema-compiler = { module = "com.google.mlkit:genai-schema-compiler", version.ref = "genaiSchemaCompiler" }
 
 # Kotlin
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }

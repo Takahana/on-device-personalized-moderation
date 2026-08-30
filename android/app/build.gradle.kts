@@ -20,7 +20,7 @@ android {
     compileSdk = 36
     defaultConfig {
         applicationId = "com.example.mystream"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -123,6 +123,10 @@ dependencies {
   // Kotlin
   implementation(libs.kotlinx.serialization.json)
   implementation(libs.kotlinx.collections.immutable)
+
+  // GenAI
+  implementation(libs.genai.prompt)
+  ksp(libs.genai.schema.compiler)
 
   // Project modules
   implementation(project(":shared"))
