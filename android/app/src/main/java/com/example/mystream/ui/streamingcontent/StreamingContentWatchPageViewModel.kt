@@ -9,7 +9,7 @@ import com.example.mystream.logger.Logger
 import com.example.mystream.ui.core.uimodel.StreamingContentIdUiModel
 import com.example.mystream.ui.core.uimodel.toDomain
 import com.example.mystream.ui.streamingcontent.StreamingContentWatchPageEffect.ShowErrorToast
-import com.example.mystream.ui.core.viewmodel.mutableSingleEffectFlow
+import com.example.mystream.ui.core.viewmodel.mutableEffectFlow
 import com.example.mystream.ui.streamingcontent.uimodel.mapToUiModel
 import com.example.mystream.usecase.PresentErrorType
 import com.example.mystream.usecase.StreamingContentWatchPagePresenter
@@ -54,7 +54,7 @@ class StreamingContentWatchPageViewModel @AssistedInject constructor(
         initialValue = StreamingContentWatchPageUiState()
     )
 
-    private val _effect = mutableSingleEffectFlow<StreamingContentWatchPageEffect>()
+    private val _effect = mutableEffectFlow<StreamingContentWatchPageEffect>()
     val effect: Flow<StreamingContentWatchPageEffect> = _effect.asSharedFlow()
 
     val chatInputState = TextFieldState()
