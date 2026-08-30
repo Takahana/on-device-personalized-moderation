@@ -1,32 +1,67 @@
 package com.example.mystream.service
 
 import com.example.mystream.api.chat.LiveChatApi
+import com.example.mystream.data.RegexPatternRepository
 import com.example.mystream.domain.chat.ChatRoomId
 import com.example.mystream.domain.chat.LiveChatMessage
 import com.example.mystream.shared.chat.LiveChatMessageBody
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 class LiveChatService @Inject constructor(
   private val liveChatApi: LiveChatApi,
   private val liveChatFilter: LiveChatFilter,
+  private val regexPatternRepository: RegexPatternRepository,
 ) {
+
+  // パーソナライズ用に50件まで保持しておく
+  private val receivedMessages = mutableListOf<LiveChatMessage>()
 
   suspend fun connect(
     roomId: ChatRoomId,
     onJoined: () -> Unit,
     onMessageReceived: (FilteredLiveChatMessage) -> Unit
-  ) {
-    liveChatApi.connect(
-      roomId.id,
-      onJoined = onJoined,
-      onMessageReceived = { response: LiveChatMessageBody ->
-        val message = LiveChatMessage(
-          author = response.author,
-          message = response.message,
-        )
-        onMessageReceived(liveChatFilter.check(message))
+  ) = coroutineScope {
+    launch {
+      liveChatApi.connect(
+        roomId.id,
+        onJoined = onJoined,
+        onMessageReceived = { response: LiveChatMessageBody ->
+          val message = LiveChatMessage(
+            author = response.author,
+            message = response.message,
+          )
+          onMessageReceived(liveChatFilter.check(message))
+          receivedMessages.add(message)
+          if (receivedMessages.size > 50) {
+            receivedMessages.removeAt(0)
+          }
+        }
+      )
+    }
+    launch {
+      while (true) {
+        try {
+          regexPatternRepository.personalize(
+            userPreference = "攻撃的なコメントは見たくない",
+            context = """
+              ユーザーはサッカーの試合を見ています。
+              以下は受信したコメントのカンマ区切りのリストです：
+              [${receivedMessages.joinToString(separator = ",") { it.message }}]
+            """.trimIndent()
+          )
+          currentCoroutineContext().ensureActive()
+          delay(30.seconds)
+        } catch (e: UnsupportedOperationException) {
+          break
+        }
       }
-    )
+    }
   }
 
   suspend fun sendMessage(
