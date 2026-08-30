@@ -20,10 +20,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.example.mystream.R
+import com.example.mystream.service.FilteredLiveChatMessage
+import com.example.mystream.service.FilteredLiveChatMessage.HiddenMessage
 import com.example.mystream.ui.streamingcontent.uimodel.LiveChatMessageUiModel
 import kotlinx.collections.immutable.ImmutableList
 
@@ -116,9 +120,46 @@ private fun ChatList(
 private fun ChatItem(
     message: LiveChatMessageUiModel,
 ) {
-    Card {
+    when (message) {
+        is LiveChatMessageUiModel.ShowMessage -> {
+            ChatShowItem(message = message)
+        }
+        is LiveChatMessageUiModel.HiddenMessage -> {
+            ChatHiddenItem(message = message)
+        }
+    }
+}
+
+@Composable
+private fun ChatShowItem(
+    message: LiveChatMessageUiModel.ShowMessage,
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        modifier = modifier,
+    ){
         Text(
             text = "${message.author}: ${message.message}",
+            modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
+        )
+    }
+}
+
+@Composable
+private fun ChatHiddenItem(
+    message: LiveChatMessageUiModel.HiddenMessage,
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        modifier = modifier.alpha(0.5f),
+    ){
+        Text(
+            text = when (message.reason) {
+              HiddenMessage.Reason.BLOCKED_WORD ->
+                  stringResource(id = R.string.streaming_content_watch_page_chat_message_hidden)
+              HiddenMessage.Reason.BLOCKED_BY_AI ->
+                  stringResource(id = R.string.streaming_content_watch_page_chat_message_hidden_by_ai)
+            },
             modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
         )
     }

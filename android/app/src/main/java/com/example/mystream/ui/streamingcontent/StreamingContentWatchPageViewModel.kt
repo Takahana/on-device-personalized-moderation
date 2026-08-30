@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mystream.domain.chat.LiveChatMessage
 import com.example.mystream.logger.Logger
+import com.example.mystream.service.FilteredLiveChatMessage
 import com.example.mystream.ui.core.uimodel.StreamingContentIdUiModel
 import com.example.mystream.ui.core.uimodel.toDomain
 import com.example.mystream.ui.streamingcontent.StreamingContentWatchPageEffect.ShowErrorToast
@@ -42,7 +43,7 @@ class StreamingContentWatchPageViewModel @AssistedInject constructor(
     }
 
     // 上限100件のメッセージを保持する
-    private val messages = MutableStateFlow<List<LiveChatMessage>>(emptyList())
+    private val messages = MutableStateFlow<List<FilteredLiveChatMessage>>(emptyList())
 
     val uiState: StateFlow<StreamingContentWatchPageUiState> = messages.map { currentMessages ->
         StreamingContentWatchPageUiState(
@@ -76,7 +77,7 @@ class StreamingContentWatchPageViewModel @AssistedInject constructor(
     }
 
     inner class Presenter : StreamingContentWatchPagePresenter {
-        override fun newMessage(message: LiveChatMessage) {
+        override fun newMessage(message: FilteredLiveChatMessage) {
             logger.d("new message received: $message")
             messages.update { currentMessages ->
                 (currentMessages + message).takeLast(100)

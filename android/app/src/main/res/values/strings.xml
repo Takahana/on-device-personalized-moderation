@@ -3,4 +3,6 @@
 
     <!-- StreamingContentWatchPage -->
     <string name="streaming_content_watch_page_send_message_failed">Failed to send message</string>
+    <string name="streaming_content_watch_page_chat_message_hidden">不適切なチャットを非表示にしました</string>
+    <string name="streaming_content_watch_page_chat_message_hidden_by_ai">AIが不適切なチャットを非表示にしました</string>
 </resources>

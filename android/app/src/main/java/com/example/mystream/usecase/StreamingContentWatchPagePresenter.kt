@@ -1,9 +1,9 @@
 package com.example.mystream.usecase
 
-import com.example.mystream.domain.chat.LiveChatMessage
+import com.example.mystream.service.FilteredLiveChatMessage
 
 interface StreamingContentWatchPagePresenter {
-  fun newMessage(message: LiveChatMessage)
+  fun newMessage(message: FilteredLiveChatMessage)
   fun clearMessageInput()
   fun showError(errorType: PresentErrorType)
 }
