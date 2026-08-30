@@ -28,6 +28,7 @@ android {
 
     buildTypes {
         debug {
+            isDebuggable = true
             buildConfigField(
                 "String",
                 "LIVE_CHAT_URL",

@@ -3,6 +3,8 @@ package com.example.mystream.api.chat
 import com.example.mystream.BuildConfig
 import com.example.mystream.logger.Logger
 import com.example.mystream.shared.chat.LiveChatMessageBody
+import com.example.mystream.shared.chat.LiveChatServerMessageBody
+import com.example.mystream.shared.chat.LiveChatServerMessageBody.SessionState
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.websocket.webSocketSession
 import io.ktor.client.request.url
@@ -23,10 +25,11 @@ class DefaultLiveChatApi(
   private val baseUrl = BuildConfig.LIVE_CHAT_URL
 
   private var webSocketSession: WebSocketSession? = null
+  private var sessionState: SessionState = SessionState.INITIAL
 
   override suspend fun connect(
     roomId: String,
-    onSessionStart: () -> Unit,
+    onJoined: () -> Unit,
     onMessageReceived: (LiveChatMessageBody) -> Unit,
   ) {
     webSocketSession?.close()
@@ -34,19 +37,28 @@ class DefaultLiveChatApi(
       url("$baseUrl/ws")
     }
     webSocketSession = newSession
-    onSessionStart()
     while (currentCoroutineContext().isActive) {
       val frame = newSession.incoming.receive() as? Frame.Text ?: continue
       val message = frame.readText()
-      val response = try {
-        Json.decodeFromString(LiveChatMessageBody.serializer(), message)
+      try {
+        val serverMessage = Json.decodeFromString(LiveChatServerMessageBody.serializer(), message)
+        when (serverMessage.sessionState) {
+          SessionState.INITIAL -> {
+            sessionState = SessionState.INITIAL
+          }
+          SessionState.JOINED -> {
+            if (sessionState < SessionState.JOINED) {
+              sessionState = SessionState.JOINED
+              onJoined()
+            }
+          }
+        }
+        serverMessage.newChatMessage?.let { newMessage ->
+          onMessageReceived(newMessage)
+        }
       } catch (e: Exception) {
         currentCoroutineContext().ensureActive()
-        logger.d("Failed to decode message: $message", e)
-        null
-      }
-      if (response != null) {
-        onMessageReceived(response)
+        logger.e("Failed to decode server message: $message", e)
       }
     }
     webSocketSession?.close()
@@ -60,5 +72,6 @@ class DefaultLiveChatApi(
     val session = webSocketSession ?: throw IllegalStateException("WebSocket session is not connected")
     val messageJson = Json.encodeToString(LiveChatMessageBody.serializer(), message)
     session.send(Frame.Text(messageJson))
+    logger.d("Sent message: $messageJson")
   }
 }
