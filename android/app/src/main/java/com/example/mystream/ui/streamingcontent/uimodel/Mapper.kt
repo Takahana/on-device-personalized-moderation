@@ -1,14 +1,21 @@
 package com.example.mystream.ui.streamingcontent.uimodel
 
-import com.example.mystream.domain.chat.LiveChatMessage
+import com.example.mystream.service.FilteredLiveChatMessage
 
-fun List<LiveChatMessage>.mapToUiModel(): List<LiveChatMessageUiModel> {
+fun List<FilteredLiveChatMessage>.mapToUiModel(): List<LiveChatMessageUiModel> {
   return map { it.toUiModel() }
 }
 
-fun LiveChatMessage.toUiModel(): LiveChatMessageUiModel {
-    return LiveChatMessageUiModel(
-        author = this.author,
-        message = this.message,
-    )
+fun FilteredLiveChatMessage.toUiModel(): LiveChatMessageUiModel {
+    return when (this) {
+        is FilteredLiveChatMessage.ShowMessage -> LiveChatMessageUiModel.ShowMessage(
+            author = message.author,
+            message = message.message,
+        )
+        is FilteredLiveChatMessage.HiddenMessage -> LiveChatMessageUiModel.HiddenMessage(
+            author = message.author,
+            message = message.message,
+            reason = reason,
+        )
+    }
 }

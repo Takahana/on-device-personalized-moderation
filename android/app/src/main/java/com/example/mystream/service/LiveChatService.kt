@@ -8,12 +8,13 @@ import javax.inject.Inject
 
 class LiveChatService @Inject constructor(
   private val liveChatApi: LiveChatApi,
+  private val liveChatFilter: LiveChatFilter,
 ) {
 
   suspend fun connect(
     roomId: ChatRoomId,
     onJoined: () -> Unit,
-    onMessageReceived: (LiveChatMessage) -> Unit
+    onMessageReceived: (FilteredLiveChatMessage) -> Unit
   ) {
     liveChatApi.connect(
       roomId.id,
@@ -23,7 +24,7 @@ class LiveChatService @Inject constructor(
           author = response.author,
           message = response.message,
         )
-        onMessageReceived(message)
+        onMessageReceived(liveChatFilter.check(message))
       }
     )
   }
