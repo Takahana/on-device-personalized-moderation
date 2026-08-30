@@ -9,7 +9,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.example.mystream.usecase.StreamingContentWatchPageUseCase.StreamingContentWatchPageEvent.SessionStarted
+import com.example.mystream.usecase.StreamingContentWatchPageUseCase.StreamingContentWatchPageEvent.Joined
+import kotlinx.coroutines.delay
 
 /**
  * 配信中コンテンツの視聴ページのユースケース。
@@ -33,15 +34,15 @@ class StreamingContentWatchPageUseCase(
       launch {
         for (event in eventHandler) {
           when (event) {
-            is SessionStarted -> onSessionStart()
+            is Joined -> onJoined()
           }
         }
       }
       launch {
         liveChatService.connect(
           chatRoomId,
-          onSessionStart = {
-            eventHandler.trySend(SessionStarted)
+          onJoined = {
+            eventHandler.trySend(Joined)
           },
           onMessageReceived = { message ->
             presenter.newMessage(message)
@@ -61,7 +62,6 @@ class StreamingContentWatchPageUseCase(
         ChatRoomId("test"),
         message = newMessage,
       )
-      presenter.newMessage(newMessage)
       presenter.clearMessageInput()
     } catch (e: Exception) {
       logger.e("Failed to send message: ${e.message}", e)
@@ -69,12 +69,11 @@ class StreamingContentWatchPageUseCase(
     }
   }
 
-  private suspend fun onSessionStart() {
+  private suspend fun onJoined() {
     val newMessage = LiveChatMessage(
       author = "User",
       message = "Hi!"
     )
-    presenter.newMessage(newMessage)
     liveChatService.sendMessage(
       ChatRoomId("test"),
       message = newMessage,
@@ -92,6 +91,6 @@ class StreamingContentWatchPageUseCase(
   }
 
   private sealed class StreamingContentWatchPageEvent {
-    object SessionStarted : StreamingContentWatchPageEvent()
+    object Joined : StreamingContentWatchPageEvent()
   }
 }

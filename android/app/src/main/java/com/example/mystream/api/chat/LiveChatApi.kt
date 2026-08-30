@@ -5,7 +5,7 @@ import com.example.mystream.shared.chat.LiveChatMessageBody
 interface LiveChatApi {
   suspend fun connect(
     roomId: String,
-    onSessionStart: () -> Unit,
+    onJoined: () -> Unit,
     onMessageReceived: (LiveChatMessageBody) -> Unit,
   )
 

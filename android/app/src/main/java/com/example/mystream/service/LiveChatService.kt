@@ -12,12 +12,12 @@ class LiveChatService @Inject constructor(
 
   suspend fun connect(
     roomId: ChatRoomId,
-    onSessionStart: () -> Unit,
+    onJoined: () -> Unit,
     onMessageReceived: (LiveChatMessage) -> Unit
   ) {
     liveChatApi.connect(
       roomId.id,
-      onSessionStart = onSessionStart,
+      onJoined = onJoined,
       onMessageReceived = { response: LiveChatMessageBody ->
         val message = LiveChatMessage(
           author = response.author,

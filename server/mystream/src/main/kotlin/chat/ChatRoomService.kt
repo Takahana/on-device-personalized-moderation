@@ -36,12 +36,15 @@ class ChatRoomService {
 
   suspend fun broadcast(
     roomId: ChatRoomId,
-    message: LiveChatMessageBody,
+    newChatMessage: LiveChatMessageBody,
   ) {
     val sessions = this.sessions[roomId]
     if (sessions != null) {
       for (session in sessions) {
-        session.sendSerialized(message)
+        session.sendSerialized(LiveChatServerMessageBody(
+          sessionState = LiveChatServerMessageBody.SessionState.JOINED,
+          newChatMessage = newChatMessage,
+        ))
       }
     }
   }

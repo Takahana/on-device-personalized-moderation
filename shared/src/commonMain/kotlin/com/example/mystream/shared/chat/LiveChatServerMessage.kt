@@ -7,9 +7,12 @@ import kotlinx.serialization.Serializable
 data class LiveChatServerMessageBody(
   @SerialName("session_state")
   val sessionState: SessionState,
+  @SerialName("new_chat_message")
+  val newChatMessage: LiveChatMessageBody? = null,
 ) {
   @Serializable
   enum class SessionState {
+    INITIAL,
     JOINED,
   }
 }
