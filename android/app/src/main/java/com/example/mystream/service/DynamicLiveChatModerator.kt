@@ -9,7 +9,7 @@ class DynamicLiveChatModerator(
 
   override fun moderate(message: LiveChatMessage): LiveChatModerateResult {
     regexPatternRepository.getRegexPatterns().forEach { pattern ->
-      if (message.message.matches(Regex(pattern))) {
+      if (Regex(pattern).containsMatchIn(message.message)) {
         return LiveChatModerateResult.HideByAI
       }
     }
