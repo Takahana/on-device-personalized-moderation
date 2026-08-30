@@ -3,6 +3,7 @@ package com.example.mystream.usecase
 import com.example.mystream.domain.chat.ChatRoomId
 import com.example.mystream.domain.chat.LiveChatMessage
 import com.example.mystream.domain.content.StreamingContentId
+import com.example.mystream.logger.Logger
 import com.example.mystream.service.LiveChatService
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
@@ -18,6 +19,8 @@ class StreamingContentWatchPageUseCase(
   private val liveChatService: LiveChatService,
 ) {
   private val eventHandler = Channel<StreamingContentWatchPageEvent>(Channel.UNLIMITED)
+
+  private val logger = Logger("StreamingContentWatchPageUseCase")
 
   /**
    * 初回表示
@@ -48,6 +51,24 @@ class StreamingContentWatchPageUseCase(
     }
   }
 
+  suspend fun sendMessage(message: String) {
+    try {
+      val newMessage = LiveChatMessage(
+        author = "User",
+        message = message
+      )
+      liveChatService.sendMessage(
+        ChatRoomId("test"),
+        message = newMessage,
+      )
+      presenter.newMessage(newMessage)
+      presenter.clearMessageInput()
+    } catch (e: Exception) {
+      logger.e("Failed to send message: ${e.message}", e)
+      presenter.showError(PresentErrorType.SendMessageFailed)
+    }
+  }
+
   private suspend fun onSessionStart() {
     val newMessage = LiveChatMessage(
       author = "User",
@@ -70,7 +91,7 @@ class StreamingContentWatchPageUseCase(
     }
   }
 
-  sealed class StreamingContentWatchPageEvent {
+  private sealed class StreamingContentWatchPageEvent {
     object SessionStarted : StreamingContentWatchPageEvent()
   }
 }
