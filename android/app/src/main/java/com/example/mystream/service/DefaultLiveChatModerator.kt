@@ -15,9 +15,7 @@ class DefaultLiveChatModerator(
   }
 
   companion object {
-    val DEFAULT_BLOCKED_WORDS = listOf(
-      "そこ決めろよ",
-      "それ外すのかよ",
-    )
+    // 過度に攻撃的な言葉や差別的な言葉をブロックするためのデフォルトのリスト
+    val DEFAULT_BLOCKED_WORDS = emptyList<String>()
   }
 }
