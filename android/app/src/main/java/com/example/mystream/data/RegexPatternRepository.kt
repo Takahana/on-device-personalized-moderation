@@ -2,8 +2,12 @@ package com.example.mystream.data
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlin.jvm.Throws
 
-class RegexPatternRepository(
+@Singleton
+class RegexPatternRepository @Inject constructor(
   private val regexPatternGenerator: RegexPatternGenerator,
 ) {
 
@@ -35,6 +39,7 @@ class RegexPatternRepository(
     }
   }
 
+  @Throws(UnsupportedOperationException::class)
   suspend fun personalize(
     userPreference: String,
     context: String,

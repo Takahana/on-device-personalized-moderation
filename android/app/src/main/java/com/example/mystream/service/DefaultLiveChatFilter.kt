@@ -10,13 +10,13 @@ class DefaultLiveChatFilter(
   private val moderator: LiveChatModerator,
 ) : LiveChatFilter {
 
-  @Inject constructor() : this(
+  @Inject constructor(
+    regexPatternRepository: RegexPatternRepository
+  ) : this(
     CompositeLiveChatModerator(
       defaultModerator = DefaultLiveChatModerator(),
       dynamicModerator = DynamicLiveChatModerator(
-        regexPatternRepository = RegexPatternRepository(
-          regexPatternGenerator = GenAIRegexPatternGenerator()
-        ),
+        regexPatternRepository = regexPatternRepository,
       )
     )
   )
