@@ -1,5 +1,6 @@
 package com.example.mystream.service
 
+import com.example.mystream.data.GenAIRegexPatternGenerator
 import com.example.mystream.data.RegexPatternRepository
 import com.example.mystream.domain.chat.LiveChatMessage
 import com.example.mystream.service.FilteredLiveChatMessage.HiddenMessage.Reason
@@ -13,7 +14,9 @@ class DefaultLiveChatFilter(
     CompositeLiveChatModerator(
       defaultModerator = DefaultLiveChatModerator(),
       dynamicModerator = DynamicLiveChatModerator(
-        regexPatternRepository = RegexPatternRepository(),
+        regexPatternRepository = RegexPatternRepository(
+          regexPatternGenerator = GenAIRegexPatternGenerator()
+        ),
       )
     )
   )
