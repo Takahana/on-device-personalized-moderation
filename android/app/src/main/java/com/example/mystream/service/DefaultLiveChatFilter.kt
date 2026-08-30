@@ -5,29 +5,31 @@ import com.example.mystream.service.FilteredLiveChatMessage.HiddenMessage.Reason
 import javax.inject.Inject
 
 class DefaultLiveChatFilter(
-  private val blockedWords: List<String> = DEFAULT_BLOCKED_WORDS,
+  private val moderator: LiveChatModerator,
 ) : LiveChatFilter {
 
-  @Inject constructor() : this(DEFAULT_BLOCKED_WORDS)
+  @Inject constructor() : this(
+    CompositeLiveChatModerator(
+      defaultModerator = DefaultLiveChatModerator()
+    )
+  )
 
   override fun check(message: LiveChatMessage): FilteredLiveChatMessage {
-    val isBlocked = blockedWords.any { blockedWord ->
-      message.message.contains(blockedWord)
-    }
-    return if (isBlocked) {
-      FilteredLiveChatMessage.HiddenMessage(
-        message = message,
-        reason = Reason.BLOCKED_WORD,
-      )
-    } else {
-      FilteredLiveChatMessage.ShowMessage(message)
-    }
-  }
+    return when (moderator.moderate(message)) {
+      LiveChatModerateResult.Hide ->
+        FilteredLiveChatMessage.HiddenMessage(
+          message = message,
+          reason = Reason.BLOCKED_WORD,
+        )
 
-  companion object {
-    val DEFAULT_BLOCKED_WORDS = listOf(
-      "そこ決めろよ",
-      "それ外すのかよ",
-    )
+      LiveChatModerateResult.HideByAI ->
+        FilteredLiveChatMessage.HiddenMessage(
+          message = message,
+          reason = Reason.BLOCKED_BY_AI,
+        )
+
+      LiveChatModerateResult.Show ->
+        FilteredLiveChatMessage.ShowMessage(message)
+    }
   }
 }
