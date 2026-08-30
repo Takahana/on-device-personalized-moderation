@@ -1,5 +1,6 @@
 package com.example.mystream.service
 
+import com.example.mystream.data.RegexPatternDataSource
 import com.example.mystream.domain.chat.LiveChatMessage
 import com.example.mystream.service.FilteredLiveChatMessage.HiddenMessage.Reason
 import javax.inject.Inject
@@ -10,7 +11,10 @@ class DefaultLiveChatFilter(
 
   @Inject constructor() : this(
     CompositeLiveChatModerator(
-      defaultModerator = DefaultLiveChatModerator()
+      defaultModerator = DefaultLiveChatModerator(),
+      dynamicModerator = DynamicLiveChatModerator(
+        regexPatternDataSource = RegexPatternDataSource(),
+      )
     )
   )
 
