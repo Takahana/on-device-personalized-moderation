@@ -29,8 +29,10 @@ fun Application.configureRouting() {
         get("/") {
             call.respondText("Hello, World!")
         }
-        webSocket("/ws") { // websocketSession
-            val chatRoomId = ChatRoomId("test")
+        webSocket("/ws/{roomId}") { // websocketSession
+            val chatRoomId = call.parameters["roomId"]
+                ?.let { ChatRoomId(it) }
+                ?: ChatRoomId("default")
             chatRoomService.join(chatRoomId, this)
             dummyChatGenerator.join(chatRoomId)
             try {

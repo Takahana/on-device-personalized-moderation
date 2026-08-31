@@ -34,7 +34,7 @@ class DefaultLiveChatApi(
   ) {
     webSocketSession?.close()
     val newSession = httpClient.webSocketSession {
-      url("$baseUrl/ws")
+      url("$baseUrl/ws/$roomId")
     }
     webSocketSession = newSession
     while (currentCoroutineContext().isActive) {

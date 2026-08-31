@@ -29,7 +29,7 @@ class StreamingContentWatchPageUseCase(
   suspend fun display(
     streamingContentId: StreamingContentId,
   ) {
-    val chatRoomId = ChatRoomId("test")
+    val chatRoomId = ChatRoomId(streamingContentId.id)
     coroutineScope {
       launch {
         for (event in eventHandler) {
