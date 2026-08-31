@@ -41,39 +41,32 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.mystream.R
 import com.example.mystream.service.FilteredLiveChatMessage
 import com.example.mystream.service.FilteredLiveChatMessage.HiddenMessage
 import com.example.mystream.theme.MyStreamTheme
+import com.example.mystream.ui.core.uimodel.StreamingContentIdUiModel
 import com.example.mystream.ui.streamingcontent.uimodel.LiveChatMessageUiModel
+import com.example.mystream.usecase.StreamingContentWatchPagePresenter
+import com.example.mystream.usecase.StreamingContentWatchPageUseCase
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun StreamingContentWatchPageScreen(
     viewModel: StreamingContentWatchPageViewModel,
     modifier: Modifier = Modifier,
 ) {
-    Column(
+    val uiState by viewModel.uiState.collectAsState()
+    StreamingContentWatchPageScreen(
+        uiState = uiState,
+        chatInputState = viewModel.chatInputState,
+        onSendPressed = {
+            viewModel.onSendPressed()
+        },
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            text = "Streaming Content Watch Page",
-        )
-
-        val uiState by viewModel.uiState.collectAsState()
-        ChatList(
-            messages = uiState.messages,
-            modifier = Modifier.weight(1f),
-        )
-        ChatInput(
-            state = viewModel.chatInputState,
-            modifier = Modifier.fillMaxWidth(),
-            onSendPressed = {
-                viewModel.onSendPressed()
-            },
-        )
-    }
+    )
 
     val context = LocalContext.current
     LaunchedEffect(viewModel) {
@@ -93,6 +86,33 @@ fun StreamingContentWatchPageScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+internal fun StreamingContentWatchPageScreen(
+    uiState: StreamingContentWatchPageUiState,
+    chatInputState: TextFieldState,
+    onSendPressed: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            text = "Streaming Content Watch Page",
+        )
+
+        ChatList(
+            messages = uiState.messages,
+            modifier = Modifier.weight(1f),
+        )
+        ChatInput(
+            state = chatInputState,
+            modifier = Modifier.fillMaxWidth(),
+            onSendPressed = onSendPressed,
+        )
     }
 }
 
@@ -247,6 +267,30 @@ private fun ChatHiddenItemPreview(
     MyStreamTheme {
         ChatHiddenItem(
             message = message,
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun StreamingContentWatchPageScreenPreview() {
+    MyStreamTheme {
+        StreamingContentWatchPageScreen(
+            uiState = StreamingContentWatchPageUiState(
+                messages = listOf(
+                    LiveChatMessageUiModel.ShowMessage(
+                        author = "Author1",
+                        message = "This is a visible message.",
+                    ),
+                    LiveChatMessageUiModel.HiddenMessage(
+                        author = "Author2",
+                        message = "This is a hidden message.",
+                        reason = HiddenMessage.Reason.BLOCKED_WORD,
+                    ),
+                ).toImmutableList(),
+            ),
+            chatInputState = TextFieldState(),
+            onSendPressed = {},
         )
     }
 }
