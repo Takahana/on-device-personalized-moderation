@@ -4,6 +4,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,22 +13,38 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import com.example.mystream.ui.streamingcontent.StreamingContentWatchPageEffect.ShowErrorToast
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.example.mystream.R
 import com.example.mystream.service.FilteredLiveChatMessage
 import com.example.mystream.service.FilteredLiveChatMessage.HiddenMessage
+import com.example.mystream.theme.MyStreamTheme
 import com.example.mystream.ui.streamingcontent.uimodel.LiveChatMessageUiModel
 import kotlinx.collections.immutable.ImmutableList
 
@@ -153,15 +170,37 @@ private fun ChatHiddenItem(
     Card(
         modifier = modifier.alpha(0.5f),
     ){
-        Text(
-            text = when (message.reason) {
-              HiddenMessage.Reason.BLOCKED_WORD ->
-                  stringResource(id = R.string.streaming_content_watch_page_chat_message_hidden)
-              HiddenMessage.Reason.BLOCKED_BY_AI ->
-                  stringResource(id = R.string.streaming_content_watch_page_chat_message_hidden_by_ai)
-            },
-            modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            var showMessage by remember(message) { mutableStateOf(false) }
+            if (showMessage) {
+                Text(
+                    text = "${message.author}: ${message.message}",
+                    modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
+                )
+            } else {
+                Text(
+                    text = when (message.reason) {
+                        HiddenMessage.Reason.BLOCKED_WORD -> stringResource(id = R.string.streaming_content_watch_page_chat_message_hidden)
+                        HiddenMessage.Reason.BLOCKED_BY_AI -> stringResource(id = R.string.streaming_content_watch_page_chat_message_hidden_by_ai)
+                    },
+                    modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
+                )
+            }
+            IconButton(
+                onClick = { showMessage = !showMessage }
+            ) {
+                Icon(
+                    painter = if (showMessage) {
+                        rememberVectorPainter(Icons.Default.VisibilityOff)
+                    } else {
+                        rememberVectorPainter(Icons.Default.Visibility)
+                    },
+                    contentDescription = null,
+                )
+            }
+        }
     }
 }
 
@@ -181,4 +220,33 @@ private fun ChatInput(
             onSendPressed()
         },
     )
+}
+
+internal class ChatHiddenItemPreviewParameterProvider :
+    PreviewParameterProvider<LiveChatMessageUiModel.HiddenMessage> {
+    override val values: Sequence<LiveChatMessageUiModel.HiddenMessage>
+        get() = sequenceOf(
+            LiveChatMessageUiModel.HiddenMessage(
+                author = "Author",
+                message = "This is a hidden message.",
+                reason = HiddenMessage.Reason.BLOCKED_WORD,
+            ),
+            LiveChatMessageUiModel.HiddenMessage(
+                author = "Author",
+                message = "This is a hidden message.",
+                reason = HiddenMessage.Reason.BLOCKED_BY_AI,
+            ),
+        )
+}
+
+@Preview
+@Composable
+private fun ChatHiddenItemPreview(
+    @PreviewParameter(ChatHiddenItemPreviewParameterProvider::class) message: LiveChatMessageUiModel.HiddenMessage,
+) {
+    MyStreamTheme {
+        ChatHiddenItem(
+            message = message,
+        )
+    }
 }

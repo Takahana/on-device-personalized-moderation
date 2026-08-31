@@ -43,7 +43,7 @@ fun MainScreen(
 @Composable
 internal fun MainScreen(
   data: List<String>,
-  onToTestWatchPageButtonClick: () -> Unit,
+  onToTestWatchPageButtonClick: () -> Unit= {},
   modifier: Modifier = Modifier,
 ) {
   Column(
