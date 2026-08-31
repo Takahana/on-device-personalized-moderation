@@ -39,6 +39,8 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -63,6 +65,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.window.core.layout.WindowSizeClass
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.example.mystream.R
 import com.example.mystream.service.FilteredLiveChatMessage
 import com.example.mystream.service.FilteredLiveChatMessage.HiddenMessage
@@ -143,6 +147,7 @@ fun StreamingContentWatchPageScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 internal fun StreamingContentWatchPageScreen(
     uiState: StreamingContentWatchPageUiState.Loaded,
@@ -151,29 +156,69 @@ internal fun StreamingContentWatchPageScreen(
     onShowRegexSheet: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Player(
-            id = uiState.contentId,
-        )
-        Text(
-            text = uiState.title,
-            style = MaterialTheme.typography.titleLarge,
-        )
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val widthSizeClass = adaptiveInfo.windowSizeClass.windowWidthSizeClass
+    val useTwoPane = widthSizeClass != WindowWidthSizeClass.COMPACT
+    if (useTwoPane) {
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Player(
+                    id = uiState.contentId,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    text = uiState.title,
+                    style = MaterialTheme.typography.titleLarge,
+                )
+            }
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                ChatList(
+                    messages = uiState.messages,
+                    modifier = Modifier.weight(1f),
+                )
+                ChatInput(
+                    state = chatInputState,
+                    modifier = Modifier.fillMaxWidth(),
+                    onSendPressed = onSendPressed,
+                    onShowRegexSheet = onShowRegexSheet,
+                    regexPatternCount = uiState.regexPatterns.size,
+                )
+            }
+        }
+    } else {
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Player(
+                id = uiState.contentId,
+            )
+            Text(
+                text = uiState.title,
+                style = MaterialTheme.typography.titleLarge,
+            )
 
-        ChatList(
-            messages = uiState.messages,
-            modifier = Modifier.weight(1f),
-        )
-        ChatInput(
-            state = chatInputState,
-            modifier = Modifier.fillMaxWidth(),
-            onSendPressed = onSendPressed,
-            onShowRegexSheet = onShowRegexSheet,
-            regexPatternCount = uiState.regexPatterns.size,
-        )
+            ChatList(
+                messages = uiState.messages,
+                modifier = Modifier.weight(1f),
+            )
+            ChatInput(
+                state = chatInputState,
+                modifier = Modifier.fillMaxWidth(),
+                onSendPressed = onSendPressed,
+                onShowRegexSheet = onShowRegexSheet,
+                regexPatternCount = uiState.regexPatterns.size,
+            )
+        }
     }
 }
 
