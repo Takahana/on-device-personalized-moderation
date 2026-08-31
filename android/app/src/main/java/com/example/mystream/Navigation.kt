@@ -25,13 +25,8 @@ fun MainNavigation() {
       entryProvider {
         entry<Main> {
           MainScreen(
-            onItemClick = { navKey -> backStack.add(navKey) },
-            onToTestWatchPageButtonClick = {
-              backStack.add(
-                StreamingContentWatchPage(
-                  streamingContentId = StreamingContentIdUiModel("test")
-                )
-              )
+            onContentCardClick = { contentId ->
+              backStack.add(StreamingContentWatchPage(contentId))
             },
             modifier = Modifier.safeDrawingPadding().padding(16.dp)
           )
