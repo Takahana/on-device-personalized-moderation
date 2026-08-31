@@ -1,5 +1,6 @@
 package com.example.mystream.usecase
 
+import com.example.mystream.data.RegexPatternRepository
 import com.example.mystream.domain.chat.ChatRoomId
 import com.example.mystream.domain.chat.LiveChatMessage
 import com.example.mystream.domain.content.StreamingContentId
@@ -18,6 +19,7 @@ import kotlinx.coroutines.delay
 class StreamingContentWatchPageUseCase(
   private val presenter: StreamingContentWatchPagePresenter,
   private val liveChatService: LiveChatService,
+  private val regexPatternRepository: RegexPatternRepository,
 ) {
   private val eventHandler = Channel<StreamingContentWatchPageEvent>(Channel.UNLIMITED)
 
@@ -29,7 +31,7 @@ class StreamingContentWatchPageUseCase(
   suspend fun display(
     streamingContentId: StreamingContentId,
   ) {
-    val chatRoomId = ChatRoomId("test")
+    val chatRoomId = ChatRoomId(streamingContentId.id)
     coroutineScope {
       launch {
         for (event in eventHandler) {
@@ -48,6 +50,11 @@ class StreamingContentWatchPageUseCase(
             presenter.newMessage(message)
           }
         )
+      }
+      launch {
+        regexPatternRepository.observeRegexPatterns().collect { patterns ->
+          presenter.updateRegexPatterns(patterns)
+        }
       }
     }
   }
@@ -80,13 +87,18 @@ class StreamingContentWatchPageUseCase(
     )
   }
 
+  fun leave() {
+    regexPatternRepository.clearRegexPatterns()
+  }
+
   class Factory @Inject constructor(
     private val liveChatService: LiveChatService,
+    private val regexPatternRepository: RegexPatternRepository,
   ) {
     fun create(
       presenter: StreamingContentWatchPagePresenter,
     ): StreamingContentWatchPageUseCase {
-      return StreamingContentWatchPageUseCase(presenter, liveChatService)
+      return StreamingContentWatchPageUseCase(presenter, liveChatService, regexPatternRepository)
     }
   }
 

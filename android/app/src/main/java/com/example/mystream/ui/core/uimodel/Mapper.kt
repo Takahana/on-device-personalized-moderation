@@ -5,3 +5,5 @@ import kotlin.jvm.Throws
 
 @Throws(IllegalArgumentException::class)
 fun StreamingContentIdUiModel.toDomain() = StreamingContentId(id)
+
+fun StreamingContentId.toUiModel() = StreamingContentIdUiModel(id)

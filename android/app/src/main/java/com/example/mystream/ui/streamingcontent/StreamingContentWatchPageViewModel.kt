@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -45,14 +46,28 @@ class StreamingContentWatchPageViewModel @AssistedInject constructor(
     // 上限100件のメッセージを保持する
     private val messages = MutableStateFlow<List<FilteredLiveChatMessage>>(emptyList())
 
-    val uiState: StateFlow<StreamingContentWatchPageUiState> = messages.map { currentMessages ->
-        StreamingContentWatchPageUiState(
+    private val regexPatterns = MutableStateFlow<Set<String>>(emptySet())
+
+    val uiState: StateFlow<StreamingContentWatchPageUiState> = combine(
+        messages,
+        regexPatterns,
+    ) { currentMessages, currentRegexPatterns ->
+        StreamingContentWatchPageUiState.Loaded(
+            contentId = streamingContentId,
+            title = when (streamingContentId.id) {
+                "soccer" -> "サッカー"
+                "news" -> "政治ニュース"
+                "variety" -> "お笑いバラエティ"
+                "reality" -> "恋愛リアリティショー"
+                else -> throw IllegalArgumentException("Unknown streamingContentId: ${streamingContentId.id}")
+            },
             messages = currentMessages.mapToUiModel().toImmutableList(),
+            regexPatterns = currentRegexPatterns.toImmutableList(),
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = StreamingContentWatchPageUiState()
+        initialValue = StreamingContentWatchPageUiState.Loading
     )
 
     private val _effect = mutableEffectFlow<StreamingContentWatchPageEffect>()
@@ -76,6 +91,12 @@ class StreamingContentWatchPageViewModel @AssistedInject constructor(
         }
     }
 
+    override fun onCleared() {
+        logger.d("onCleared called")
+        useCase.leave()
+        super.onCleared()
+    }
+
     inner class Presenter : StreamingContentWatchPagePresenter {
         override fun newMessage(message: FilteredLiveChatMessage) {
             logger.d("new message received: $message")
@@ -91,6 +112,10 @@ class StreamingContentWatchPageViewModel @AssistedInject constructor(
         override fun showError(errorType: PresentErrorType) {
             logger.d("error occurred: $errorType")
             emitErrorEffect(errorType)
+        }
+
+        override fun updateRegexPatterns(patterns: Set<String>) {
+            regexPatterns.update { patterns }
         }
 
         private fun emitErrorEffect(errorType: PresentErrorType) {

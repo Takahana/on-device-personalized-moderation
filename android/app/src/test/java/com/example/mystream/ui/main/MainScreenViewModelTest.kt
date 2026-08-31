@@ -1,6 +1,8 @@
 package com.example.mystream.ui.main
 
 import com.example.mystream.data.DataRepository
+import com.example.mystream.domain.content.StreamingContentCard
+import com.example.mystream.domain.content.StreamingContentId
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -23,5 +25,24 @@ class MainScreenViewModelTest {
 }
 
 private class FakeMyModelRepository : DataRepository {
-  override val data: Flow<List<String>> = flow { emit(listOf("Sample")) }
+  override val cards: Flow<List<StreamingContentCard>> = flow { emit(
+    listOf(
+      StreamingContentCard(
+        id = StreamingContentId("soccer"),
+        "サッカー"
+      ),
+      StreamingContentCard(
+        id = StreamingContentId("news"),
+        "政治ニュース"
+      ),
+      StreamingContentCard(
+        id = StreamingContentId("reality"),
+        "恋愛リアリティショー"
+      ),
+      StreamingContentCard(
+        id = StreamingContentId("variety"),
+        "お笑いバラエティ"
+      ),
+    )
+  ) }
 }

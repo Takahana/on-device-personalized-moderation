@@ -1,6 +1,8 @@
 package com.example.mystream.data
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -37,6 +39,12 @@ class RegexPatternRepository @Inject constructor(
     cache.update { currentSet ->
       currentSet - patterns
     }
+  }
+
+  fun observeRegexPatterns(): Flow<Set<String>> = cache.asStateFlow()
+
+  fun clearRegexPatterns() {
+    cache.update { emptySet() }
   }
 
   @Throws(UnsupportedOperationException::class)
