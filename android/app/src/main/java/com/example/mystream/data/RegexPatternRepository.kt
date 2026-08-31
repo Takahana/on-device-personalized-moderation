@@ -43,6 +43,10 @@ class RegexPatternRepository @Inject constructor(
 
   fun observeRegexPatterns(): Flow<Set<String>> = cache.asStateFlow()
 
+  fun clearRegexPatterns() {
+    cache.update { emptySet() }
+  }
+
   @Throws(UnsupportedOperationException::class)
   suspend fun personalize(
     userPreference: String,

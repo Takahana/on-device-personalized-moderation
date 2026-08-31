@@ -87,6 +87,10 @@ class StreamingContentWatchPageUseCase(
     )
   }
 
+  fun leave() {
+    regexPatternRepository.clearRegexPatterns()
+  }
+
   class Factory @Inject constructor(
     private val liveChatService: LiveChatService,
     private val regexPatternRepository: RegexPatternRepository,

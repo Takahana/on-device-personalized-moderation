@@ -91,6 +91,12 @@ class StreamingContentWatchPageViewModel @AssistedInject constructor(
         }
     }
 
+    override fun onCleared() {
+        logger.d("onCleared called")
+        useCase.leave()
+        super.onCleared()
+    }
+
     inner class Presenter : StreamingContentWatchPagePresenter {
         override fun newMessage(message: FilteredLiveChatMessage) {
             logger.d("new message received: $message")
