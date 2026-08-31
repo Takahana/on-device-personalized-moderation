@@ -31,7 +31,7 @@ class DummyChatGenerator(
       withTimeoutOrNull(5.minutes) { // Stop after 5 minutes
         var counter = 0
         while (true) {
-          delay(5.seconds) // Generate a message every 5 seconds
+          delay(3.seconds) // Generate a message every 3 seconds
           val message = LiveChatMessageBody(
             author = "DummyUser",
             message = DUMMY_CHAT_MESSAGES[counter++ % DUMMY_CHAT_MESSAGES.size],
