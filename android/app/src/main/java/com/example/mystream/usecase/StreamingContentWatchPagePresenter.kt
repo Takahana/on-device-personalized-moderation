@@ -6,6 +6,7 @@ interface StreamingContentWatchPagePresenter {
   fun newMessage(message: FilteredLiveChatMessage)
   fun clearMessageInput()
   fun showError(errorType: PresentErrorType)
+  fun updateRegexPatterns(patterns: Set<String>)
 }
 
 sealed interface PresentErrorType {

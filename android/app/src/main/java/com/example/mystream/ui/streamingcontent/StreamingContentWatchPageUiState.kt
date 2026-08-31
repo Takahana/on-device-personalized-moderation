@@ -11,7 +11,7 @@ import kotlinx.collections.immutable.toImmutableList
 
 @Immutable
 sealed interface StreamingContentWatchPageUiState {
-    
+
     data object Loading : StreamingContentWatchPageUiState
 
     @Immutable
@@ -19,5 +19,6 @@ sealed interface StreamingContentWatchPageUiState {
         val contentId: StreamingContentIdUiModel,
         val title: String,
         val messages: ImmutableList<LiveChatMessageUiModel>,
+        val regexPatterns: ImmutableList<String>,
     ) : StreamingContentWatchPageUiState
 }

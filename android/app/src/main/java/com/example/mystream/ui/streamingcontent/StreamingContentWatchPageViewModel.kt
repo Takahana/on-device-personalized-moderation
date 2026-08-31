@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -45,7 +46,12 @@ class StreamingContentWatchPageViewModel @AssistedInject constructor(
     // 上限100件のメッセージを保持する
     private val messages = MutableStateFlow<List<FilteredLiveChatMessage>>(emptyList())
 
-    val uiState: StateFlow<StreamingContentWatchPageUiState> = messages.map { currentMessages ->
+    private val regexPatterns = MutableStateFlow<Set<String>>(emptySet())
+
+    val uiState: StateFlow<StreamingContentWatchPageUiState> = combine(
+        messages,
+        regexPatterns,
+    ) { currentMessages, currentRegexPatterns ->
         StreamingContentWatchPageUiState.Loaded(
             contentId = streamingContentId,
             title = when (streamingContentId.id) {
@@ -56,6 +62,7 @@ class StreamingContentWatchPageViewModel @AssistedInject constructor(
                 else -> throw IllegalArgumentException("Unknown streamingContentId: ${streamingContentId.id}")
             },
             messages = currentMessages.mapToUiModel().toImmutableList(),
+            regexPatterns = currentRegexPatterns.toImmutableList(),
         )
     }.stateIn(
         scope = viewModelScope,
@@ -99,6 +106,10 @@ class StreamingContentWatchPageViewModel @AssistedInject constructor(
         override fun showError(errorType: PresentErrorType) {
             logger.d("error occurred: $errorType")
             emitErrorEffect(errorType)
+        }
+
+        override fun updateRegexPatterns(patterns: Set<String>) {
+            regexPatterns.update { patterns }
         }
 
         private fun emitErrorEffect(errorType: PresentErrorType) {
