@@ -52,10 +52,17 @@ class LiveChatService @Inject constructor(
         "reality" -> "恋愛リアリティショー。揺れる気持ちとすれ違う想い。恋の矢印が大きく動く、運命の夜が始まります。"
         else -> "配信中コンテンツ"
       }
+      val userPreference = when (roomId.id) {
+        "soccer" -> "選手のミスやプレーを強く責めるコメントは見たくない。"
+        "news" -> "政治家や政策を一方的に馬鹿にするようなコメントは見たくない。"
+        "variety" -> "芸人やネタをつまらない、滑っていると強く否定するコメントは見たくない。"
+        "reality" -> "出演者の性格や恋愛行動を決めつけて批判するコメントは見たくない。"
+        else -> "攻撃的なコメントは見たくない"
+      }
       while (true) {
         try {
           regexPatternRepository.personalize(
-            userPreference = "攻撃的なコメントは見たくない",
+            userPreference = userPreference,
             context = """
               番組概要：$content
               以下は受信したコメントのカンマ区切りのリストです：
