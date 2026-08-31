@@ -46,13 +46,21 @@ class StreamingContentWatchPageViewModel @AssistedInject constructor(
     private val messages = MutableStateFlow<List<FilteredLiveChatMessage>>(emptyList())
 
     val uiState: StateFlow<StreamingContentWatchPageUiState> = messages.map { currentMessages ->
-        StreamingContentWatchPageUiState(
+        StreamingContentWatchPageUiState.Loaded(
+            contentId = streamingContentId,
+            title = when (streamingContentId.id) {
+                "soccer" -> "サッカー"
+                "news" -> "政治ニュース"
+                "variety" -> "お笑いバラエティ"
+                "reality" -> "恋愛リアリティショー"
+                else -> throw IllegalArgumentException("Unknown streamingContentId: ${streamingContentId.id}")
+            },
             messages = currentMessages.mapToUiModel().toImmutableList(),
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = StreamingContentWatchPageUiState()
+        initialValue = StreamingContentWatchPageUiState.Loading
     )
 
     private val _effect = mutableEffectFlow<StreamingContentWatchPageEffect>()

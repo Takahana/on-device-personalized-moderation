@@ -1,10 +1,16 @@
 package com.example.mystream.ui.streamingcontent
 
 import android.util.Log
+import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -59,14 +66,27 @@ fun StreamingContentWatchPageScreen(
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    StreamingContentWatchPageScreen(
-        uiState = uiState,
-        chatInputState = viewModel.chatInputState,
-        onSendPressed = {
-            viewModel.onSendPressed()
-        },
-        modifier = modifier,
-    )
+
+    when (val uiState = uiState) {
+        is StreamingContentWatchPageUiState.Loading -> {
+            Box(
+                modifier = modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        is StreamingContentWatchPageUiState.Loaded -> {
+            StreamingContentWatchPageScreen(
+                uiState = uiState,
+                chatInputState = viewModel.chatInputState,
+                onSendPressed = {
+                    viewModel.onSendPressed()
+                },
+                modifier = modifier,
+            )
+        }
+    }
 
     val context = LocalContext.current
     LaunchedEffect(viewModel) {
@@ -91,7 +111,7 @@ fun StreamingContentWatchPageScreen(
 
 @Composable
 internal fun StreamingContentWatchPageScreen(
-    uiState: StreamingContentWatchPageUiState,
+    uiState: StreamingContentWatchPageUiState.Loaded,
     chatInputState: TextFieldState,
     onSendPressed: () -> Unit,
     modifier: Modifier = Modifier,
@@ -100,8 +120,12 @@ internal fun StreamingContentWatchPageScreen(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+        Player(
+            id = uiState.contentId,
+        )
         Text(
-            text = "Streaming Content Watch Page",
+            text = uiState.title,
+            style = MaterialTheme.typography.titleLarge,
         )
 
         ChatList(
@@ -113,6 +137,31 @@ internal fun StreamingContentWatchPageScreen(
             modifier = Modifier.fillMaxWidth(),
             onSendPressed = onSendPressed,
         )
+    }
+}
+
+@Composable
+private fun Player(
+    id: StreamingContentIdUiModel,
+    modifier: Modifier = Modifier,
+) {
+    Image(
+        painter = painterResource(id = id.thumbnail()),
+        contentDescription = null,
+        modifier = modifier
+            .fillMaxWidth()
+            .aspectRatio(16f / 9f),
+    )
+}
+
+@DrawableRes
+private fun StreamingContentIdUiModel.thumbnail(): Int {
+    return when (id) {
+        "soccer" -> R.drawable.thumb_soccer
+        "news" -> R.drawable.thumb_news
+        "reality" -> R.drawable.thumb_reality
+        "variety" -> R.drawable.thumb_variety
+        else -> throw IllegalArgumentException("Unknown content id: ${id}")
     }
 }
 
@@ -276,7 +325,9 @@ private fun ChatHiddenItemPreview(
 private fun StreamingContentWatchPageScreenPreview() {
     MyStreamTheme {
         StreamingContentWatchPageScreen(
-            uiState = StreamingContentWatchPageUiState(
+            uiState = StreamingContentWatchPageUiState.Loaded(
+                contentId = StreamingContentIdUiModel(id = "soccer"),
+                title = "Soccer Match",
                 messages = listOf(
                     LiveChatMessageUiModel.ShowMessage(
                         author = "Author1",
