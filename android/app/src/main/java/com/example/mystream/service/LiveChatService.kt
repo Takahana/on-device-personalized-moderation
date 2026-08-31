@@ -45,12 +45,19 @@ class LiveChatService @Inject constructor(
       )
     }
     launch {
+      val content = when (roomId.id) {
+        "soccer" -> "サッカー。勝負を分ける一瞬の判断。攻守が激しく入れ替わる、日本代表の熱戦を見逃すな。"
+        "news" -> "政治ニュース。物価高対策の行方は。与野党がぶつかる国会論戦、その発言と対応に注目が集まります。"
+        "variety" -> "お笑いバラエティ。芸人たちが体当たり企画に挑戦。予測不能の展開と爆笑の瞬間をお届けします。"
+        "reality" -> "恋愛リアリティショー。揺れる気持ちとすれ違う想い。恋の矢印が大きく動く、運命の夜が始まります。"
+        else -> "配信中コンテンツ"
+      }
       while (true) {
         try {
           regexPatternRepository.personalize(
             userPreference = "攻撃的なコメントは見たくない",
             context = """
-              ユーザーはサッカーの試合を見ています。
+              番組概要：$content
               以下は受信したコメントのカンマ区切りのリストです：
               [${receivedMessages.joinToString(separator = ",") { it.message }}]
             """.trimIndent()
