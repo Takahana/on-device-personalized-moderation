@@ -48,6 +48,9 @@ class StreamingContentWatchPageUseCase(
           },
           onMessageReceived = { message ->
             presenter.newMessage(message)
+          },
+          onPersonalizationUnsupported = {
+            presenter.showError(PresentErrorType.PersonalizationUnsupported)
           }
         )
       }

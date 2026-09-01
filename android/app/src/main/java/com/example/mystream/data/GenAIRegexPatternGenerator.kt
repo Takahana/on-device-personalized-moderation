@@ -47,7 +47,7 @@ class GenAIRegexPatternGenerator : RegexPatternGenerator {
   override suspend fun generateRegexPatterns(
     userPreference: String,
     context: String,
-  ): RegexPatternGenerator.Result {
+  ): GeneratedRegexPatternsResult {
     when (generativeModel.checkStatus()) {
       FeatureStatus.UNAVAILABLE -> {
         logger.e("Generative model is unavailable")
@@ -57,7 +57,7 @@ class GenAIRegexPatternGenerator : RegexPatternGenerator {
       FeatureStatus.DOWNLOADABLE,
       FeatureStatus.DOWNLOADING -> {
         if (!awaitDownload(generativeModel)) {
-          return RegexPatternGenerator.Result(
+          return GeneratedRegexPatternsResult(
             newPatterns = emptySet(),
             removedPatterns = emptySet()
           )
@@ -124,7 +124,7 @@ class GenAIRegexPatternGenerator : RegexPatternGenerator {
     val generatedList = response.candidates.firstOrNull()?.response
     if (generatedList == null || generatedList.patterns.isEmpty()) {
       logger.e("No generated list received")
-      return RegexPatternGenerator.Result(
+      return GeneratedRegexPatternsResult(
         newPatterns = emptySet(),
         removedPatterns = emptySet()
       )
@@ -133,7 +133,7 @@ class GenAIRegexPatternGenerator : RegexPatternGenerator {
       runCatching { Regex(it) }.getOrNull() != null
     }.toSet()
     logger.d("Generated new patterns: $newPatterns")
-    return RegexPatternGenerator.Result(
+    return GeneratedRegexPatternsResult(
       newPatterns = newPatterns,
       removedPatterns = emptySet()
     )

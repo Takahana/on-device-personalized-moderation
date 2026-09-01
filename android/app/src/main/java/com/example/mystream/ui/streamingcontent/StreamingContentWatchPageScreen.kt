@@ -135,6 +135,10 @@ fun StreamingContentWatchPageScreen(
                         is ErrorToastType.SendMessageFailed -> {
                             R.string.streaming_content_watch_page_send_message_failed
                         }
+
+                        is ErrorToastType.PersonalizationUnsupported -> {
+                            R.string.streaming_content_watch_page_personalization_unsupported
+                        }
                     }
                     Toast.makeText(
                         context,
