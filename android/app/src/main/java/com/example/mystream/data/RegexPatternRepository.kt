@@ -1,5 +1,7 @@
 package com.example.mystream.data
 
+import com.example.mystream.logger.Logger
+import com.google.mlkit.genai.common.GenAiException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,6 +14,8 @@ import kotlin.jvm.Throws
 class RegexPatternRepository @Inject constructor(
   private val regexPatternGenerator: RegexPatternGenerator,
 ) {
+
+  private val logger = Logger("RegexPatternRepository")
 
   private val cache = MutableStateFlow<Set<String>>(emptySet())
 
@@ -52,11 +56,16 @@ class RegexPatternRepository @Inject constructor(
     userPreference: String,
     context: String,
   ) {
-    val result = regexPatternGenerator.generateRegexPatterns(
-      userPreference = userPreference,
-      context = context
-    )
-    addAllRegexPattern(result.newPatterns)
-    removeAllRegexPattern(result.removedPatterns)
+    try {
+      val result = regexPatternGenerator.generateRegexPatterns(
+        userPreference = userPreference,
+        context = context
+      )
+      addAllRegexPattern(result.newPatterns)
+      removeAllRegexPattern(result.removedPatterns)
+    } catch (e: GenAiException) {
+      logger.e("Error generating regex patterns: ${e.message}", e)
+      throw UnsupportedOperationException("Failed to generate regex patterns", e)
+    }
   }
 }
