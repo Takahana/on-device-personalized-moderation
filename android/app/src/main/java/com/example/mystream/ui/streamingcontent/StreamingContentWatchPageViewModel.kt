@@ -121,6 +121,7 @@ class StreamingContentWatchPageViewModel @AssistedInject constructor(
         private fun emitErrorEffect(errorType: PresentErrorType) {
             val effect = when (errorType) {
               PresentErrorType.SendMessageFailed -> ShowErrorToast(ErrorToastType.SendMessageFailed)
+              PresentErrorType.PersonalizationUnsupported -> ShowErrorToast(ErrorToastType.PersonalizationUnsupported)
             }
             viewModelScope.launch {
                 _effect.emit(effect)

@@ -6,4 +6,5 @@ sealed interface StreamingContentWatchPageEffect {
 
 sealed interface ErrorToastType {
   object SendMessageFailed : ErrorToastType
+  object PersonalizationUnsupported : ErrorToastType
 }

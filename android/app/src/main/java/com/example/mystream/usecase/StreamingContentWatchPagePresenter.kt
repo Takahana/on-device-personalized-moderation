@@ -11,4 +11,5 @@ interface StreamingContentWatchPagePresenter {
 
 sealed interface PresentErrorType {
   object SendMessageFailed : PresentErrorType
+  object PersonalizationUnsupported : PresentErrorType
 }

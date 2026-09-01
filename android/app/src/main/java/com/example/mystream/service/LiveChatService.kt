@@ -25,7 +25,8 @@ class LiveChatService @Inject constructor(
   suspend fun connect(
     roomId: ChatRoomId,
     onJoined: () -> Unit,
-    onMessageReceived: (FilteredLiveChatMessage) -> Unit
+    onMessageReceived: (FilteredLiveChatMessage) -> Unit,
+    onPersonalizationUnsupported: () -> Unit,
   ) = coroutineScope {
     launch {
       liveChatApi.connect(
@@ -72,6 +73,7 @@ class LiveChatService @Inject constructor(
           currentCoroutineContext().ensureActive()
           delay(30.seconds)
         } catch (e: UnsupportedOperationException) {
+          onPersonalizationUnsupported()
           break
         }
       }
